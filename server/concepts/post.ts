@@ -11,6 +11,9 @@ export interface PostDoc extends BaseDoc {
 export default class PostConcept {
   public readonly posts = new DocCollection<PostDoc>("posts");
 
+  async getById(_id: ObjectId) {
+    return await this.posts.readOne({ _id });
+  }
   async create(author: ObjectId, content: string) {
     const _id = await this.posts.createOne({ author, content });
     return { msg: "Post successfully created!", post: await this.posts.readOne({ _id }) };

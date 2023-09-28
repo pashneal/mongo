@@ -11,10 +11,9 @@ export default class UserConcept {
   public readonly users = new DocCollection<UserDoc>("users");
 
   async getById(_id: ObjectId) {
-    // TODO 1: Implement this method
-    // Hint: check out this.users.readOne
-    throw new Error("Not implemented!");
+    this.users.readOne({ _id });
   }
+  
 
   async create(username: string, password: string) {
     await this.canCreate(username, password);
@@ -23,9 +22,7 @@ export default class UserConcept {
   }
 
   async update(_id: ObjectId, update: Partial<UserDoc>) {
-    // TODO 2: Implement this method
-    // Hint: check out this.users.updateOne
-    throw new Error("Not implemented!");
+    this.users.updateOne({ _id }, update);
   }
 
   // Sanitizes user object by removing password field

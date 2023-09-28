@@ -7,6 +7,24 @@ import { PostDoc } from "./concepts/post";
 import { UserDoc } from "./concepts/user";
 import { WebSessionDoc } from "./concepts/websession";
 
+// Pre conditions
+let is = {
+  authorOf : {
+    post: (_id: ObjectId) => {
+       return {
+        during : async (session: WebSessionDoc) => {
+          const user = WebSession.getUser(session);
+          const post = await Post.getById(_id );
+          if (post === null) { throw new Error("Post does not exist"); }
+          if (user !== post.author) {
+            throw new Error("User is not the author of the post");
+          }
+        }
+      }
+    }
+  }
+}
+
 class Routes {
   @Router.get("/session")
   async getSessionUser(session: WebSessionDoc) {
@@ -62,10 +80,13 @@ class Routes {
 
   @Router.delete("/posts/:_id")
   async deletePost(session: WebSessionDoc, _id: ObjectId) {
-    // TODO 3: Delete the post with given _id
-    // Make sure the user deleting is the author of the post
-    throw new Error("Not implemented!");
+
+    let preconditions = is.authorOf.post(_id).during(session);
+    await preconditions;
+    return await Post.delete(_id);
   }
+
+
 }
 
 export default getExpressRouter(new Routes());
